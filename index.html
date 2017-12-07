@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Visualização Orçamento Brasileiro</title>
+	<script src="lib/jquery/jquery.min.js"></script>
+	<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="lib/css/styles.css" rel ="stylesheet">
+	<script>
+
+	function carregaFrame(div, page){
+		$('#'+div).load(page, function() {
+		});
+	}
+	function opcaoEscolhida(){
+		var posicao = document.getElementById("selectTipoVisualizacao").selectedIndex;
+		var opcao = document.getElementById("selectEstado").options;
+		var ano = document.getElementById("selectAno").selectedIndex;
+		return opcao[posicao].text
+	}
+
+	function exec() {
+		d3sparql.debug = true;
+		var endpoint = "http://togostanza.org/sparql";
+		var sparql = "PREFIX up: <http://purl.uniprot.org/core/> PREFIX ec: <http://purl.uniprot.org/enzyme/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX skos: <http://www.w3.org/2004/02/skos/core#> SELECT  ?root        ?parent         ?enzyme        (COUNT(?protein) AS ?value) FROM <http://togogenome.org/graph/uniprot> WHERE {        VALUES ?root { ec:1.-.-.- }        ?root skos:narrowerTransitive* ?enzyme .        ?parent skos:narrowerTransitive ?enzyme .        ?protein up:enzyme ?enzyme . }GROUP BY ?root ?parent ?enzyme ORDER BY ?enzyme"
+		d3sparql.query(endpoint, sparql, render);
+	}
+	function render(json) {
+		var config = {
+			"width": 1000,
+			"height": 600,
+			"selector": "#result"
+		}
+		d3sparql.treemapzoom(json, config);
+	}
+	</script>
+</head>
+<body>
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner" style="padding-left: 20px">
+			<br>
+			<center>
+				<button><i class="icon-th"></i><a href="index.html">Inicio</a></button>
+				<a href="paginaConsulta.html"><button><i class="icon-th"></i>Consultas</button></a>
+			</center>
+			<br>
+		</div>
+	</div>
+
+	<div id="frame" style="padding: 50px">
+		<h1><center>Plataforma de Visualização de Dados Orçamentários</center></h1>
+		<pre class="prettyprint"><center>
+			<p>O presente projeto, criado para a disciplina de Soluções Web Baseadas em Software Livre,
+visa dar continuidade ao desenvolvimento de um portal de visualização de dados
+orçamentários brasileiros armazenados nos padrões da Web Semântica.
+Os dados em questão se encontram disponíveis através de um banco de dados triplestore
+e serão utilizados para alimentar o sistema web.</p>
+
+			<p> Visualizações criadas a partir da biblioteca d3sparql: <a href=https://github.com/ktym/d3sparql.git target="_blank">https://github.com/ktym/d3sparql.git</a>
+			</p></center>
+		</pre>	
+			<center><h2>Integrantes:</h2></center>
+		<pre class="prettyprint"><center>
+			<h4>André Mello 7137440</h4>
+			<h4>Cinthia Mancusi Valeije 8623830</h4>
+			<h4>Gustavo Gamino 8516462</h4>
+			<h4>Victor Samuel Rubio Carlos 8082719</h>
+			</center>
+		</pre>
+	</div>
+</body>
+</html>
